@@ -3,7 +3,7 @@ class CreateJobPosts < ActiveRecord::Migration[6.0]
     create_table :job_posts do |t|
       t.string :title
       t.string :company
-      t.string :url
+      t.text :url
       t.jsonb :settings
 
       t.timestamps

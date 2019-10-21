@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2019_10_21_165438) do
   create_table "job_posts", force: :cascade do |t|
     t.string "title"
     t.string "company"
-    t.string "url"
+    t.text "url"
     t.jsonb "settings"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
