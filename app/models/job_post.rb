@@ -7,7 +7,7 @@ class JobPost < ApplicationRecord
   def self.crawl_jobs_from_link(url)
     browser = MasterLookup.load_google_driver(false)
     browser.goto 'https://www.linkedin.com/'
-    MasterLookup.login(browser, '', '')
+    MasterLookup.login(browser, )
     browser.goto JobPost::TARGET_URL
     sleep(5)
     html = browser.html
@@ -17,15 +17,16 @@ class JobPost < ApplicationRecord
 
   def self.scrap_and_save_jobs(browser)
 
-    for i in 0..40
+    for i in 11..40
       number = i == 0 ? 1 : (i * 25)
-      url = "https://www.linkedin.com/jobs/search/?f_I=4%2C6%2C43%2C96&f_LF=f_EA&f_PP=100495523&f_TPR=r2592000&geoId=101165590&keywords=architect&location=United%20Kingdom&sortBy=R&start=#{number}"
+      url = "linkedin.com/jobs/search/?f_I=4%2C6%2C43%2C96&f_LF=f_EA&f_PP=100495523&f_TPR=r2592000&geoId=101165590&keywords=&location=United%20Kingdom&sortBy=R&start=#{number}"
       browser.goto url
       sleep(3)
       jobs = []
       browser.lis(:class, 'occludable-update').each do |job|
         job.imgs(:class, 'job-card-search__logo-image').first.click
         sleep(1)
+        #browser.driver.execute_script("window.scrollBy(0,2000)")
         html = browser.html
         doc = Nokogiri::HTML(html)
         inner_job = job.html
@@ -62,6 +63,20 @@ class JobPost < ApplicationRecord
         }
       end
       JobPost.insert_all(insert_able_data)
+    end
+  end
+
+  def self .export_data
+
+    require 'csv'
+    CSV.open('/home/muneeb/upwork_projects/linkedin-crawler/public/linkedin_jobs.csv', "wb") do |csv|
+      csv << ['Job Title', 'Company Name', 'Location', 'Date Posted', 'Number of views', 'Number of applicants', 'Number of Employees', 'Company Category', 'Job Description', 'About Company']
+      JobPost.all.each do |data|
+        data = data.settings
+        views = data['views']
+        views = '2 views' if views.include?('Posted Date')
+        csv << [data['job_title'], data['compay_name'], data['location'], data['posted_date'], views, data['applicants'], data['employees'], data['company_category'], data['job_description'], data['job_description']]
+      end
     end
   end
 end

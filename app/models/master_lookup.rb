@@ -9,7 +9,7 @@ class MasterLookup < ApplicationRecord
   end
 
   def self.load_google_driver(headless = true)
-    Selenium::WebDriver::Chrome::Service.driver_path = "#{Rails.root.to_s}/plugins/mac/chromedriver"
+    Selenium::WebDriver::Chrome::Service.driver_path = "#{Rails.root.to_s}/plugins/chromedriver"
     browser = Watir::Browser.new :chrome, headless: headless
     browser
   end
